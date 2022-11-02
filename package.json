@@ -1,0 +1,28 @@
+{
+  "name": "products-gy",
+  "version": "1.0.0",
+  "description": "testing 1, 2 testing again",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server-dev": "npx nodemon --watch server server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabeyamartino/products-gy.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gabeyamartino/products-gy/issues"
+  },
+  "homepage": "https://github.com/gabeyamartino/products-gy#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.20",
+    "pg": "^8.8.0",
+    "ramda": "^0.28.0"
+  }
+}
