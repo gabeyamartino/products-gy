@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const port = 3000;
 const db = require('./db/index.js');
-const {getAllProducts, getProduct, getStyles} = require('./db/index.js')
+const {getAllProducts, getProduct, getStyles, getRelated} = require('./db/index.js')
 
 //app.use(bodyParser.json())
 app.use(express.json());
@@ -37,21 +37,12 @@ app.get('/products', (req, res) => {
 
 app.get('/products/:product_id', getProduct);
 
-// //PRODUCT STYLES
+//PRODUCT STYLES
 
 app.get('/products/:product_id/styles', getStyles)
-// (req, res) => {
-//   getStyles(req.params.product_id)
-//   .then((data) => {
-//     console.log(data)
-//     res.send(data);
-//   })
-//   .catch((err) => {
-//     console.log(err)
-//     res.status(500)
-//     res.end();
-//   })
-// })
+
+//RELATED STYLES
+app.get('/products/:product_id/related', getRelated)
 
 app.listen(port, () => {
   console.log(`listening on port ${port}`)

@@ -33,43 +33,62 @@ const getProduct = (req, res) => {
       })
 }
 
-const getStyles = (request, response) => {
-  var product_id = request.params.product_id;
-  var query = `SELECT * FROM styles WHERE product_id = ${product_id}`;
-  pool
-    .query(query)
-    .then(res => {
-      var styles = res.rows;
-      let photoPromises = [];
-      let skuPromises = [];
-      styles.forEach((style) => {
-        photoPromises.push(pool.query(`SELECT thumbnail_url, url FROM photos WHERE "style_id" = ${style.style_id}`)
-          .then(res => res.rows)
+const getStyles = (req, res) => {
+  var product_id = req.params.product_id;
+
+  return pool.query(`SELECT json_build_object
+  (
+      'product_id', ${product_id},
+      'results',
+    (SELECT json_agg
+      (json_build_object
+        (
+        'style_id', style_id,
+        'name', name,
+        'original_price', original_price,
+        'sale_price', sale_price,
+        'default?', "default?",
+        'photos',(SELECT json_agg(json_build_object(
+              'thumbnail_url', thumbnail_url,
+              'url', url)
+        ) FROM photos where photos.style_id = styles.style_id),
+        'skus',(SELECT json_object_agg(
+              id, (
+                SELECT json_build_object(
+                'quantity', quantity,
+                'size', size)
+                )
+        ) FROM skus WHERE skus.style_id=styles.style_id
+             )
         )
-        skuPromises.push(pool.query(`SELECT size, quantity FROM skus WHERE "style_id" = ${style.style_id}`)
-          .then(res => res.rows))
-        })
-        Promise.all(photoPromises)
-          .then((res) => {
-            styles.forEach((style, index) => {
-              style.photo = res[index];
-            })
-            Promise.all(skuPromises)
-              .then((res) => {
-                styles.forEach((style, index) => {
-                  style.skus = res[index];
-                })
-                response.send(styles);
-              })
-          })
+      ) FROM styles WHERE product_id = ${product_id}
+    )
+  )`)
+    .then((data) => {
+      res.send(data);
     })
-    .catch(err => {
-      console.error('Error executing to get style information', err.stack);
+    .catch((err) => {
       res.status(500);
-    });
+      res.end();
+    })
+}
+
+const getRelated = (req, res) => {
+  return pool.query(`SELECT related_product_id FROM related WHERE current_product_id = ${req.params.product_id}`)
+    .then((data) => {
+      res.send(data.rows.map((row) => (
+        row["related_product_id"]
+    )));
+    })
+    .catch((err) => {
+      res.status(500);
+      res.end();
+    })
 }
 
 module.exports.getAllProducts = getAllProducts;
 module.exports.getProduct = getProduct;
 module.exports.getStyles = getStyles;
+module.exports.getRelated = getRelated;
+
 
