@@ -11,7 +11,8 @@ const pool = new Pool({
 
 pool.connect();
 
-const getAllProducts = () => {
+const getAllProducts = (req, res) => {
+
   return pool.query('SELECT * FROM product WHERE id < 100000')
 }
 
@@ -24,7 +25,7 @@ const getProduct = (req, res) => {
       (SELECT feature, value FROM features WHERE product_id = product.id) f ) as features
       FROM product WHERE id = ${req.params.product_id}) p`)
       .then((data) => {
-        res.send({ data: data.rows[0] });
+        res.status(200).send({ data: data.rows[0] });
       })
       .catch((err) => {
         console.log(err)
@@ -76,9 +77,7 @@ const getStyles = (req, res) => {
 const getRelated = (req, res) => {
   return pool.query(`SELECT related_product_id FROM related WHERE current_product_id = ${req.params.product_id}`)
     .then((data) => {
-      res.send(data.rows.map((row) => (
-        row["related_product_id"]
-    )));
+      res.send(data);
     })
     .catch((err) => {
       res.status(500);
