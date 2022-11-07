@@ -13,7 +13,18 @@ pool.connect();
 
 const getAllProducts = (req, res) => {
 
-  return pool.query('SELECT * FROM product WHERE id < 100000')
+  let limit = req.query.count || 5;
+  let offset = ((req.query.page - 1) * limit) || 0;
+
+
+  return pool.query('SELECT * FROM product OFFSET $1 LIMIT $2', [offset, limit])
+  .then((data) => {
+    res.send(data.rows)
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(500).end();
+  })
 }
 
 
@@ -66,7 +77,7 @@ const getStyles = (req, res) => {
     )
   )`)
     .then((data) => {
-      res.send(data);
+      res.send(data.rows[0].json_build_object);
     })
     .catch((err) => {
       res.status(500);
@@ -75,9 +86,9 @@ const getStyles = (req, res) => {
 }
 
 const getRelated = (req, res) => {
-  return pool.query(`SELECT related_product_id FROM related WHERE current_product_id = ${req.params.product_id}`)
+  return pool.query(`(SELECT array_agg(related_product_id) FROM related WHERE current_product_id = ${req.params.product_id})`)
     .then((data) => {
-      res.send(data);
+      res.send(data.rows[0].array_agg);
     })
     .catch((err) => {
       res.status(500);

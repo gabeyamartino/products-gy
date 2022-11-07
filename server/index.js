@@ -20,18 +20,8 @@ app.get('/', (req, res) => {
 
 //ALL PRODUCTS
 
-app.get('/products', (req, res) => {
-  console.log('products route setup!')
-  getAllProducts()
-  .then((data) => {
-    res.send(data)
-  })
-  .catch((err) => {
-    console.log(err)
-    res.status(500)
-    res.end();
-  })
-})
+app.get('/products', getAllProducts);
+
 
 //SINGLE PRODUCT
 
