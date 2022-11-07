@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const port = 3000;
 const db = require('./db/index.js');
-const {getAllProducts, getProduct, getStyles, getRelated} = require('./db/index.js')
+const {getAllProducts, getProduct, getStyles, getRelated} = require('./db/controllers.js')
 
 //app.use(bodyParser.json())
 app.use(express.json());

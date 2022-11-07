@@ -4,8 +4,9 @@
   "description": "testing 1, 2 testing again",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "server-dev": "npx nodemon --watch server server/index.js"
+    "test": "k6 run server/spec/k6.js",
+    "server-dev": "npx nodemon --watch server server/index.js",
+    "seed": "node server/db/seed.js"
   },
   "repository": {
     "type": "git",
