@@ -1,3 +1,6 @@
 /.env
 /falco.pem
 /overview.pgsql
+/sdc-server1.pem
+/sdc-server2.pem
+/sdc-load-balancer.pem
